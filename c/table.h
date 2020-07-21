@@ -14,12 +14,7 @@ typedef struct {
 
 typedef struct {
   int count;
-/* Hash Tables table-h < Optimization not-yet
   int capacity;
-*/
-//> Optimization not-yet
-  int capacityMask;
-//< Optimization not-yet
   Entry* entries;
 } Table;
 
@@ -44,11 +39,13 @@ void tableAddAll(Table* from, Table* to);
 ObjString* tableFindString(Table* table, const char* chars, int length,
                            uint32_t hash);
 //< table-find-string-h
-//> Garbage Collection not-yet
+//> Garbage Collection table-remove-white-h
 
 void tableRemoveWhite(Table* table);
-void grayTable(Table* table);
-//< Garbage Collection not-yet
+//< Garbage Collection table-remove-white-h
+//> Garbage Collection mark-table-h
+void markTable(Table* table);
+//< Garbage Collection mark-table-h
 
 //< init-table-h
 #endif

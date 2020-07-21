@@ -19,45 +19,43 @@
 static Obj* allocateObject(size_t size, ObjType type) {
   Obj* object = (Obj*)reallocate(NULL, 0, size);
   object->type = type;
-//> Garbage Collection not-yet
-  object->isDark = false;
-//< Garbage Collection not-yet
+//> Garbage Collection init-is-marked
+  object->isMarked = false;
+//< Garbage Collection init-is-marked
 //> add-to-list
   
   object->next = vm.objects;
   vm.objects = object;
 //< add-to-list
-//> Garbage Collection not-yet
+//> Garbage Collection debug-log-allocate
 
-#ifdef DEBUG_TRACE_GC
-  printf("%p allocate %ld for %d\n", object, size, type);
+#ifdef DEBUG_LOG_GC
+  printf("%p allocate %ld for %d\n", (void*)object, size, type);
 #endif
 
-//< Garbage Collection not-yet
+//< Garbage Collection debug-log-allocate
   return object;
 }
 //< allocate-object
-//> Methods and Initializers not-yet
-
+//> Methods and Initializers new-bound-method
 ObjBoundMethod* newBoundMethod(Value receiver, ObjClosure* method) {
   ObjBoundMethod* bound = ALLOCATE_OBJ(ObjBoundMethod,
                                        OBJ_BOUND_METHOD);
-
   bound->receiver = receiver;
   bound->method = method;
   return bound;
 }
-//< Methods and Initializers not-yet
-//> Classes and Instances not-yet
+//< Methods and Initializers new-bound-method
+//> Classes and Instances new-class
 ObjClass* newClass(ObjString* name) {
   ObjClass* klass = ALLOCATE_OBJ(ObjClass, OBJ_CLASS);
-  klass->name = name;
-//> Methods and Initializers not-yet
+  klass->name = name; // [klass]
+//> Methods and Initializers init-methods
   initTable(&klass->methods);
-//< Methods and Initializers not-yet
+//< Methods and Initializers init-methods
   return klass;
 }
-//< Classes and Instances not-yet
+//< Classes and Instances new-class
 //> Closures new-closure
 ObjClosure* newClosure(ObjFunction* function) {
 //> allocate-upvalue-array
@@ -89,15 +87,14 @@ ObjFunction* newFunction() {
   return function;
 }
 //< Calls and Functions new-function
-//> Classes and Instances not-yet
-
+//> Classes and Instances new-instance
 ObjInstance* newInstance(ObjClass* klass) {
   ObjInstance* instance = ALLOCATE_OBJ(ObjInstance, OBJ_INSTANCE);
   instance->klass = klass;
   initTable(&instance->fields);
   return instance;
 }
-//< Classes and Instances not-yet
+//< Classes and Instances new-instance
 //> Calls and Functions new-native
 ObjNative* newNative(NativeFn function) {
   ObjNative* native = ALLOCATE_OBJ(ObjNative, OBJ_NATIVE);
@@ -121,14 +118,14 @@ static ObjString* allocateString(char* chars, int length,
   string->hash = hash;
 //< Hash Tables allocate-store-hash
 
-//> Garbage Collection not-yet
+//> Garbage Collection push-string
   push(OBJ_VAL(string));
-//< Garbage Collection not-yet
+//< Garbage Collection push-string
 //> Hash Tables allocate-store-string
   tableSet(&vm.strings, string, NIL_VAL);
-//> Garbage Collection not-yet
+//> Garbage Collection pop-string
   pop();
-//< Garbage Collection not-yet
+//< Garbage Collection pop-string
 
 //< Hash Tables allocate-store-string
   return string;
@@ -214,16 +211,16 @@ static void printFunction(ObjFunction* function) {
 //> print-object
 void printObject(Value value) {
   switch (OBJ_TYPE(value)) {
-//> Classes and Instances not-yet
+//> Classes and Instances print-class
     case OBJ_CLASS:
       printf("%s", AS_CLASS(value)->name->chars);
       break;
-//< Classes and Instances not-yet
-//> Methods and Initializers not-yet
+//< Classes and Instances print-class
+//> Methods and Initializers print-bound-method
     case OBJ_BOUND_METHOD:
       printFunction(AS_BOUND_METHOD(value)->method->function);
       break;
-//< Methods and Initializers not-yet
+//< Methods and Initializers print-bound-method
 //> Closures print-closure
     case OBJ_CLOSURE:
       printFunction(AS_CLOSURE(value)->function);
@@ -234,11 +231,11 @@ void printObject(Value value) {
       printFunction(AS_FUNCTION(value));
       break;
 //< Calls and Functions print-function
-//> Classes and Instances not-yet
+//> Classes and Instances print-instance
     case OBJ_INSTANCE:
       printf("%s instance", AS_INSTANCE(value)->klass->name->chars);
       break;
-//< Classes and Instances not-yet
+//< Classes and Instances print-instance
 //> Calls and Functions print-native
     case OBJ_NATIVE:
       printf("<native fn>");

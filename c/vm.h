@@ -60,26 +60,26 @@ typedef struct {
 //> Hash Tables vm-strings
   Table strings;
 //< Hash Tables vm-strings
-//> Methods and Initializers not-yet
+//> Methods and Initializers vm-init-string
   ObjString* initString;
-//< Methods and Initializers not-yet
+//< Methods and Initializers vm-init-string
 //> Closures open-upvalues-field
   ObjUpvalue* openUpvalues;
 //< Closures open-upvalues-field
-//> Garbage Collection not-yet
+//> Garbage Collection vm-fields
 
   size_t bytesAllocated;
   size_t nextGC;
-//< Garbage Collection not-yet
+//< Garbage Collection vm-fields
 //> Strings objects-root
 
   Obj* objects;
 //< Strings objects-root
-//> Garbage Collection not-yet
+//> Garbage Collection vm-gray-stack
   int grayCount;
   int grayCapacity;
   Obj** grayStack;
-//< Garbage Collection not-yet
+//< Garbage Collection vm-gray-stack
 } VM;
 
 //> interpret-result

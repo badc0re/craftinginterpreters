@@ -1,6 +1,3 @@
-^title Evaluating Expressions
-^part A Tree-Walk Interpreter
-
 > You are my creator, but I am your master; Obey!
 >
 > <cite>Mary Shelley, <em>Frankenstein</em></cite>
@@ -420,8 +417,9 @@ The Java behavior does have one thing going for it, though -- it correctly stops
 executing any code when the error occurs. Let's say the user enters some
 expression like:
 
-    :::lox
-    2 * (3 / -"muffin")
+```lox
+2 * (3 / -"muffin")
+```
 
 You can't negate a <span name="muffin">muffin</span>, so we need to report a
 runtime error at that inner `-` expression. That in turn means we can't evaluate
@@ -656,7 +654,7 @@ interpreter doesn't do very much, but it's alive!
     is shorter than named function calls and might have a reasonable
     interpretation for some types like strings. Even comparisons among mixed
     types, like `3 < "pancake"` could be handy to enable things like
-    heterogenous ordered collections. Or it could lead to bugs and confused
+    heterogeneous ordered collections. Or it could lead to bugs and confused
     users.
 
     Would you extend Lox to support comparing other types? If so, which pairs of
